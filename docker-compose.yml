@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  primary:
+    build: .
+    ports:
+      - "8080:8080"
+      - "3478:3478/udp"
+      - "3479:3479/udp"
+    command: ["--mode", "primary", "--port", "8080", "--secondary-url", "http://secondary:8081"]
+    depends_on:
+      - secondary
+    networks:
+      - natcheck-network
+
+  secondary:
+    build: .
+    ports:
+      - "8081:8081"
+      - "3478:3478/udp"
+    command: ["--mode", "secondary", "--port", "8081"]
+    networks:
+      - natcheck-network
+
+networks:
+  natcheck-network:
+    driver: bridge
